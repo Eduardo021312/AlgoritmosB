@@ -1,0 +1,188 @@
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
+#include <vector>
+
+ using namespace std;
+
+struct Pessoa {
+    string nome;
+    string cpf;
+    string email;
+};
+
+bool inserir(vector<Pessoa>& pessoas) {
+       Pessoa p;
+
+    cout << "Digite o nome:   ";
+    getline(cin, p.nome);
+    cout << "Digite o cpf: ";
+    getline(cin, p.cpf);
+    cout << "Digite o email: ";
+    getline(cin, p.email);
+
+    if (p.nome.empty() || p.cpf.empty() || p.email.empty()) {
+        cout << "Nenhum campo pode ser vazio.\n";
+        return false;
+    }
+
+    for (size_t i = 0; i < pessoas.size(); i++) {
+        if (p.cpf == pessoas[i].cpf) {
+             cout << "cpf ja cadastrado.\n";
+            return false;
+        }
+    }
+
+    pessoas.push_back(p);
+    cout << "Cadastro inserido com sucesso.\n";
+    return true;
+}
+
+void  listar(const vector<Pessoa>& pessoas) {
+    if (pessoas.empty()) {
+        cout << "Nenhum cadastro.\n";
+        return;
+    }
+
+    cout << "\nCadastros:\n";
+     for (size_t i = 0; i < pessoas.size(); i++) {
+         cout << i + 1 << " - "
+             << pessoas[i].nome << " | "
+             << pessoas[i].cpf << " | "
+             << pessoas[i].email << "\n";
+    }
+}
+
+void  pesquisar(const vector<Pessoa>& pessoas) {
+    string nome;
+    cout << "Digite o nome que deseja pesquisar: ";
+    getline(cin, nome);
+
+    for (size_t i = 0; i < pessoas.size(); i++) {
+        if (pessoas[i].nome  == nome) {
+            cout << "Encontrado: " << pessoas[i].nome << " - "
+                 << pessoas[i].cpf << " - " << pessoas[i].email << "\n";
+               return;
+        }
+    }
+    cout << "Nome nao encontrado.\n";
+}
+
+bool remover(vector<Pessoa>& pessoas) {
+    string nome;
+    cout << "Digite o  nome que deseja remover: ";
+    getline(cin, nome);
+
+    for (size_t i = 0; i < pessoas.size(); i++) {
+        if (pessoas[i].nome == nome) {
+            pessoas.erase(pessoas.begin() + i);
+            cout << "Removido com sucesso.\n";
+            return true;
+        }
+    }
+    cout << " Nome nao encontrado.\n";
+    return false;
+}
+
+void carregarBase(string nomeBase, vector<Pessoa>& pessoas) {
+     ifstream arquivo(nomeBase.c_str());
+     if (!arquivo) {
+        return;
+    }
+
+    string linha;
+    while (getline(arquivo, linha)) {
+         if (linha.empty()) continue;
+        stringstream ss(linha);
+        Pessoa p;
+        getline(ss, p.nome, ';');
+        getline(ss, p.cpf, ';');
+        getline(ss, p.email);
+        pessoas.push_back(p);
+    }
+    arquivo.close();
+}
+
+void atualizarBase(const vector<Pessoa>& pessoas, string nomeBase) {
+    ofstream arquivo(nomeBase.c_str());
+
+    for (size_t i = 0; i < pessoas.size(); i++) {
+        arquivo << pessoas[i].nome << ";"
+                << pessoas[i].cpf << ";"
+                << pessoas[i].email << endl;
+    }
+    arquivo.close();
+}
+
+void ordenar(vector<Pessoa>& pessoas) {
+     if (pessoas.size() < 2) return;
+
+     bool houveTroca;
+    do {
+        houveTroca = false;
+        for (size_t i = 0; i + 1 < pessoas.size(); i++) {
+             if (pessoas[i].nome > pessoas[i + 1].nome) {
+                houveTroca = true;
+                Pessoa tmp = pessoas[i];
+                pessoas[i] = pessoas[i + 1];
+                pessoas[i + 1] = tmp;
+            }
+        }
+    } while (houveTroca);
+}
+
+int main() {
+    vector<Pessoa> pessoas;
+    int opcao;
+     string nomeBase = "pessoas.txt";
+
+    carregarBase(nomeBase, pessoas);
+    ordenar(pessoas);
+
+    do {
+        cout << "\n===== MENU =====\n";
+        cout << "1 - Inserir cadastro\n";
+        cout << "2 - Listar cadastros\n";
+        cout << "3 - Pesquisar por nome\n";
+        cout << "4 - Remover por nome\n";
+        cout << "5 - Sair\n";
+        cout << "Escolha uma opcao: ";
+        if (!(cin >> opcao)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Digite um numero entre 1 e 5.\n";
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        switch (opcao) {
+            case 1:
+                if (inserir(pessoas)) {
+                    ordenar(pessoas);
+                    atualizarBase(pessoas, nomeBase);
+                }
+                break;
+            case 2:
+                listar(pessoas);
+                break;
+            case 3:
+                pesquisar(pessoas);
+                break;
+            case 4:
+                if (remover(pessoas)) {
+                    atualizarBase(pessoas, nomeBase);
+                }
+                break;
+            case 5:
+                cout << "Programa encerrado.\n";
+                break;
+            default:
+                cout << "Opcao invalida.\n";
+        }
+    } while (opcao != 5);
+
+    return 0;
+}
