@@ -1,0 +1,56 @@
+#include <ctime>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+ 
+using namespace std;
+ 
+void exibirVetor(vector<int> v) {
+    for (int i = 0; i < v.size(); i++) {
+        cout << v[i] << "\t";
+    }
+    cout << "\n\n" <<  endl;
+}
+ 
+void popularVetor(vector<int> &v, int qtd, int inicio, int fim) {
+    int numero = rand() % (fim - inicio + 1) + inicio;
+    
+    for (int i = 0; i < qtd; i++){
+        numero = (rand() % inicio) +  fim;
+        v.push_back(numero);
+    }
+}
+ 
+void exercicio2(const vector<int> &vetorA, const vector<int> &vetorB, vector<int> &vetorResultado) {
+    for (int i = 0; i < vetorA.size(); i++){
+        for (int j = 0; j < vetorB.size(); j++) {
+            if (vetorA[i] == vetorB[j]) {
+                vetorResultado.push_back(vetorA[i]);
+            }
+          }
+    }
+  }
+	
+  int main() {
+	srand(time(NULL));
+	
+    vector<int> vetor;
+    vector<int> vetorB;
+    vector<int> vetorResultado;
+    
+    popularVetor(vetor, 10, 100, 500);
+    popularVetor(vetorB, 10, 100, 500);
+    
+    cout << "vetor A: " << endl;
+      exibirVetor(vetor);
+    
+    cout << "Vetor B:" << endl;
+    exibirVetor(vetorB);
+    
+    exercicio2(vetor, vetorB,vetorResultado);
+    
+    cout << "Vetor Resultado:" << endl;
+    exibirVetor(vetorResultado);
+ 
+    return 0;
+}
