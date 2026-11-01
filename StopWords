@@ -1,0 +1,62 @@
+/*fazer um programa em c++ que:
+
+1- abra e leia um arquivo txt
+2- analise palavra por palavra do arquivo
+3- comparar a palavra lido no arquivo, com a lista stopWords ={ 'A', 'O', 'AS', 'OS'}
+4 - salve toda e qualquer palavra em um arquivo de saida, chamado arquivoSemStopWords.txt
+
+  A ideia geral e principal é:
+1) carregar os stop words do arquivo stopWords.txt em uma lista de stopWords
+2) ler o arquivo e suas palavras
+3)comparar a palavra lida com as palabras da lista de stopWords
+4)descarregar em arquivo de saída as palavras do texto que nao forem stop words
+ */ 
+
+
+ #include <iostream>
+ #include <string>
+ #include <vector>
+ #include <fstream>
+
+ using namespace std;
+
+ int main(){
+
+    ofstream arquivoTextoSemStopWords;
+
+    ifstream ArquivoStopWords;
+    vector<string> listaStopWords;
+    // rotina q carrega os stopWords do arquivo para listaStopWords
+    //rotina q exiba os stopWords na listaStopWords
+    procuradorArquivo.open(nomeArquivo); 
+
+    if (!ArquivoStopWords) {
+        cout << "Arquivo não localizado. Programa encerrado." << endl;
+        exit(0);
+    } 
+ 
+	//le o arquivo capturando as frases
+	string linha;
+	while (ArquivoStopWords.eof()) {
+		getline(ArquivoStopWords, linha); //lendo a linha inteira
+		// procuradorArquivo >> frase; //lendo palavra por palavra da linha 
+		cout << linha << endl;
+		//tratar a linha e extrair dados dela
+        linha = paraMaiusculoStringComRetorno(linha);
+
+        listaStopWords.push_back(linha);
+	}
+
+	procuradorArquivo.close();
+
+    ifstream ArquivoTextoOriginal;
+    //rotina que abre e le palavra por palavra
+    //para cada palavra lisa, comparar na listaStopWords
+
+    //caso a palavra lida nao esteja na lista, adiciona-la no arquivo de saida
+
+    
+
+
+    return 1;
+ }
